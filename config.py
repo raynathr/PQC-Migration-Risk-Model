@@ -1,4 +1,27 @@
-# Configuration settings for the PQC Migration Risk Model
+# Simulation Settings
+N_SIMULATIONS = 1000   # Number of Monte Carlo iterations
+YEARS = 15             # Simulation horizon (T)
 
-# Placeholder configurations
-CONFIG = {}
+# Adversarial Capability Parameters (Table 1)
+A0_LOG = 5.0           # Initial capability (10^5 operations)
+MU_G = 0.5             # Mean annual growth rate
+SIGMA_G = 0.1          # Growth rate standard deviation
+SIGMA_EPSILON = 0.05   # Annual volatility (noise)
+
+# Risk Model Parameters
+ALPHA = 2.0            # Logistic sensitivity (Eq. 11)
+
+# Algorithm Attack Costs (Log10 operations) - Table 2
+COST_RSA_2048 = 10.0
+COST_KYBER_512 = 18.0
+
+# CAS Weights (Eq. 12)
+WEIGHTS = {
+    "w_AS": 0.40,  # Algorithm Strength
+    "w_KM": 0.25,  # Key Management
+    "w_DC": 0.20,  # Deployment Coverage
+    "w_CAI": 0.15  # Crypto-Agility
+}
+
+# Thresholds
+CAS_THRESHOLD = 0.70
