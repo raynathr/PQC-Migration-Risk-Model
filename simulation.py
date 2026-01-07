@@ -1,9 +1,37 @@
+"""
+Monte Carlo simulation engine for quantum risk assessment.
+
+This module implements the main simulation loop that generates multiple
+stochastic realizations of adversarial capability growth and calculates
+risk metrics across different cryptographic algorithms and migration scenarios.
+"""
+
 import numpy as np
 import config
 from core_logic import calculate_adversarial_capability, calculate_rqr, calculate_cas
 from scenarios import get_migration_coverage
 
 def run_monte_carlo():
+    """
+    Execute Monte Carlo simulation for quantum risk evolution.
+    
+    Generates multiple stochastic scenarios of adversarial capability growth
+    and calculates RQR for both classical (RSA-2048) and PQC (Kyber-512)
+    algorithms. The simulation accounts for uncertainty in quantum computing
+    development through random growth rates and annual volatility.
+    
+    The function implements the stochastic modeling framework from the paper,
+    combining Eq. 6 (adversarial capability), Eq. 9 (growth rate distribution),
+    and Eq. 10 (RQR calculation).
+    
+    Returns:
+        tuple: (t_array, rqr_rsa_all, rqr_kyber_all)
+            - t_array (np.ndarray): Time points from 1 to YEARS
+            - rqr_rsa_all (np.ndarray): RQR values for RSA-2048, 
+              shape (N_SIMULATIONS, YEARS)
+            - rqr_kyber_all (np.ndarray): RQR values for Kyber-512,
+              shape (N_SIMULATIONS, YEARS)
+    """
     print(f"Starting Monte Carlo Simulation ({config.N_SIMULATIONS} runs)...")
     
     # Time array: Year 1 to Year T
@@ -34,7 +62,26 @@ def run_monte_carlo():
 
 def calculate_tci_scenarios(t_array, rqr_kyber_mean):
     """
-    Calculates CAS and TCI for different migration strategies based on mean Risk.
+    Calculate CAS and TCI for different migration strategies.
+    
+    Implements Eq. 14 from the paper:
+        TCI = (1/T) * sum(CAS(t))
+    
+    This function evaluates how different migration strategies affect the
+    overall security assurance over the simulation horizon. Each strategy
+    has a different deployment coverage trajectory L(t) which affects the
+    CAS metric and ultimately the Trust Continuity Index.
+    
+    Args:
+        t_array (np.ndarray): Time points from 1 to YEARS
+        rqr_kyber_mean (np.ndarray): Mean RQR values for Kyber-512 across
+            all Monte Carlo simulations
+    
+    Returns:
+        dict: Dictionary mapping scenario names to results
+            Each entry contains:
+            - 'cas_series' (np.ndarray): CAS values over time
+            - 'tci' (float): Trust Continuity Index (time-averaged CAS)
     """
     scenarios = ["Aggressive", "Conservative", "Late_Start"]
     results = {}

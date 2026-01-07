@@ -1,0 +1,16 @@
+Algorithm,Classical_Cost,Quantum_Cost,Security_Level,Reference
+RSA-1024,14,8,Low,NIST SP 800-57
+RSA-2048,20,10,Medium,NIST SP 800-57
+RSA-3072,24,12,High,NIST SP 800-57
+RSA-4096,28,14,Very High,NIST SP 800-57
+ECC-256,15,8,Medium,NIST SP 800-57
+ECC-384,20,10,High,NIST SP 800-57
+ECC-521,24,12,Very High,NIST SP 800-57
+Kyber-512,30,18,High,NIST PQC Round 3
+Kyber-768,35,20,Very High,NIST PQC Round 3
+Kyber-1024,40,22,Extreme,NIST PQC Round 3
+Dilithium-2,32,19,High,NIST PQC Round 3
+Dilithium-3,36,21,Very High,NIST PQC Round 3
+Dilithium-5,40,23,Extreme,NIST PQC Round 3
+SPHINCS-128s,34,20,High,NIST PQC Round 3
+SPHINCS-256s,42,24,Extreme,NIST PQC Round 3

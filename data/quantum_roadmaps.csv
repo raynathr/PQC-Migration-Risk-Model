@@ -1,0 +1,14 @@
+Year,IBM_Qubits,Google_Qubits,IonQ_Qubits,Source
+2023,433,72,32,Company Announcements
+2024,1121,105,64,Projected Roadmaps
+2025,1386,288,128,Projected Roadmaps
+2026,2000,512,256,Projected Roadmaps
+2027,3000,1024,512,Industry Estimates
+2028,5000,2048,1024,Industry Estimates
+2029,10000,4096,2048,Optimistic Projections
+2030,20000,8192,4096,Optimistic Projections
+2031,40000,16384,8192,Theoretical Scaling
+2032,80000,32768,16384,Theoretical Scaling
+2033,160000,65536,32768,Theoretical Scaling
+2034,320000,131072,65536,Theoretical Scaling
+2035,500000,262144,131072,Long-term Extrapolation

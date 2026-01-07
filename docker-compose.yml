@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  pqc-simulator:
+    build: .
+    image: pqc-migration-risk-model:latest
+    container_name: pqc-simulator
+    volumes:
+      - ./results:/app/results
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python main.py --n-iterations 1000

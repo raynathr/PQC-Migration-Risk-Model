@@ -1,3 +1,14 @@
+"""
+Configuration parameters for the PQC Migration Risk Model framework.
+
+This module centralizes all simulation parameters, adversarial capability modeling
+parameters, algorithm attack costs, and risk assessment weights. These values are
+based on the research framework and can be adjusted to explore different scenarios.
+
+Parameters follow the notation from the research paper and implement the mathematical
+models described in equations 6-17.
+"""
+
 # Simulation Settings
 N_SIMULATIONS = 1000   # Number of Monte Carlo iterations
 YEARS = 15             # Simulation horizon (T)
