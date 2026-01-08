@@ -1,9 +1,34 @@
+"""
+Visualization functions for generating publication-ready figures.
+
+This module creates visualizations of simulation results including RQR evolution
+curves and CAS trajectory comparisons across different migration scenarios.
+"""
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import config
 
 def save_rqr_plot(t_array, rqr_rsa, rqr_kyber):
+    """
+    Generate and save RQR evolution plot comparing algorithms.
+    
+    Creates Figure 1 from the paper showing the evolution of Residual Quantum
+    Risk over time for classical (RSA-2048) and PQC (Kyber-512) algorithms.
+    The plot includes mean trajectories and 95% confidence intervals from
+    Monte Carlo simulations.
+    
+    Args:
+        t_array (np.ndarray): Time points (years from present)
+        rqr_rsa (np.ndarray): RQR values for RSA-2048,
+            shape (N_SIMULATIONS, YEARS)
+        rqr_kyber (np.ndarray): RQR values for Kyber-512,
+            shape (N_SIMULATIONS, YEARS)
+    
+    Side Effects:
+        Saves plot to 'results/figure1_rqr_evolution.png'
+    """
     plt.figure(figsize=(10, 6))
     
     # Plot RSA
@@ -29,6 +54,23 @@ def save_rqr_plot(t_array, rqr_rsa, rqr_kyber):
     print("Saved results/figure1_rqr_evolution.png")
 
 def save_cas_plot(t_array, scenario_results):
+    """
+    Generate and save CAS trajectories plot for migration scenarios.
+    
+    Creates Figure 2 from the paper showing how Composite Assurance Score
+    evolves under different migration strategies. Includes TCI values in
+    legend and highlights the minimum assurance threshold.
+    
+    Args:
+        t_array (np.ndarray): Time points (years from present)
+        scenario_results (dict): Dictionary mapping scenario names to their
+            CAS series and TCI values. Each entry should have:
+            - 'cas_series' (np.ndarray): CAS values over time
+            - 'tci' (float): Trust Continuity Index
+    
+    Side Effects:
+        Saves plot to 'results/figure2_cas_scenarios.png'
+    """
     plt.figure(figsize=(10, 6))
     
     colors = {"Aggressive": "green", "Conservative": "orange", "Late_Start": "red"}
