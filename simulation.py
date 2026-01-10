@@ -109,3 +109,72 @@ def calculate_tci_scenarios(t_array, rqr_kyber_mean):
         }
         
     return results
+
+def run_simulation(config_dict, n_iterations=None):
+    """
+    Run simulation with custom configuration parameters.
+    
+    This function allows running simulations with overridden parameters
+    for sensitivity analysis and scenario exploration. It calculates TCI
+    based on the provided configuration.
+    
+    Args:
+        config_dict (dict): Configuration parameters including:
+            - 'mu_g': Growth rate
+            - 'weights': Dictionary with AS, KM, DC, CAI weights
+            - Other optional parameters from DEFAULT_CONFIG
+        n_iterations (int, optional): Number of iterations to run.
+            If None, uses n_simulations from config_dict.
+    
+    Returns:
+        dict: Results containing:
+            - 'tci': Trust Continuity Index (float)
+            - 'cas_mean': Mean CAS over time (float)
+    """
+    # Extract parameters
+    n_sims = n_iterations if n_iterations is not None else config_dict.get('n_simulations', config.N_SIMULATIONS)
+    years = config_dict.get('years', config.YEARS)
+    mu_g = config_dict.get('mu_g', config.MU_G)
+    sigma_g = config_dict.get('sigma_g', config.SIGMA_G)
+    sigma_epsilon = config_dict.get('sigma_epsilon', config.SIGMA_EPSILON)
+    cost_kyber = config_dict.get('cost_kyber_512', config.COST_KYBER_512)
+    
+    # Time array
+    t_array = np.arange(1, years + 1)
+    
+    # Pre-allocate arrays
+    rqr_kyber_all = np.zeros((n_sims, years))
+    
+    # Generate random growth rates
+    g_rates = np.random.normal(mu_g, sigma_g, n_sims)
+    
+    for i in range(n_sims):
+        # Generate noise
+        epsilon = np.random.normal(0, sigma_epsilon, years)
+        
+        # Calculate Adversarial Capability
+        from core_logic import calculate_adversarial_capability, calculate_rqr
+        adv_cap = calculate_adversarial_capability(t_array, g_rates[i], epsilon)
+        
+        # Calculate RQR for Kyber
+        rqr_kyber_all[i, :] = calculate_rqr(adv_cap, cost_kyber)
+    
+    # Calculate mean RQR
+    rqr_kyber_mean = np.mean(rqr_kyber_all, axis=0)
+    
+    # For simplicity, assume full deployment (L(t) = 1) for TCI calculation
+    # In a more complex scenario, we would use different coverage scenarios
+    coverage = np.ones_like(t_array)
+    
+    # Calculate CAS using the mean RQR and coverage
+    from core_logic import calculate_cas
+    cas_series = calculate_cas(rqr_kyber_mean, coverage)
+    
+    # Calculate TCI (time-averaged CAS)
+    tci = np.mean(cas_series)
+    
+    return {
+        'tci': tci,
+        'cas_mean': tci,
+        'cas_series': cas_series
+    }

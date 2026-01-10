@@ -36,3 +36,23 @@ WEIGHTS = {
 
 # Thresholds
 CAS_THRESHOLD = 0.70
+
+# Default configuration dictionary for parameterized simulations
+DEFAULT_CONFIG = {
+    'n_simulations': N_SIMULATIONS,
+    'years': YEARS,
+    'a0_log': A0_LOG,
+    'mu_g': MU_G,
+    'sigma_g': SIGMA_G,
+    'sigma_epsilon': SIGMA_EPSILON,
+    'alpha': ALPHA,
+    'cost_rsa_2048': COST_RSA_2048,
+    'cost_kyber_512': COST_KYBER_512,
+    'weights': {
+        'AS': WEIGHTS['w_AS'],
+        'KM': WEIGHTS['w_KM'],
+        'DC': WEIGHTS['w_DC'],
+        'CAI': WEIGHTS['w_CAI']
+    },
+    'cas_threshold': CAS_THRESHOLD
+}
