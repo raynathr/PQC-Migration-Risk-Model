@@ -24,6 +24,9 @@ Usage:
     Paper mode (generates publication figures):
         python main.py --paper-mode
     
+    Generate sensitivity analysis heatmap:
+        python main.py --sensitivity
+    
     Custom output directory:
         python main.py --output-dir ./my_results
 """
@@ -66,6 +69,7 @@ Examples:
   python main.py --n-iterations 5000
   python main.py --seed 42 --paper-mode
   python main.py --output-dir ./custom_results
+  python main.py --sensitivity
         """
     )
     
@@ -87,6 +91,12 @@ Examples:
         '--paper-mode',
         action='store_true',
         help='Generate publication-ready figures with paper styling'
+    )
+    
+    parser.add_argument(
+        '--sensitivity',
+        action='store_true',
+        help='Generate sensitivity analysis heatmap (Figure 3)'
     )
     
     parser.add_argument(
@@ -163,7 +173,12 @@ def main():
         logging.info("Generating CAS trajectories plot...")
         visualization.save_cas_plot(t_array, scenario_data)
         
-        # 5. Print Summary Statistics
+        # 5. Generate Sensitivity Analysis Heatmap (Figure 3) if requested
+        if args.sensitivity or args.paper_mode:
+            logging.info("Generating sensitivity analysis heatmap...")
+            visualization.generate_sensitivity_heatmap()
+        
+        # 6. Print Summary Statistics
         print("\n" + "="*60)
         print("SIMULATION RESULTS SUMMARY")
         print("="*60)
