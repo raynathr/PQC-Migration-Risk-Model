@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import config
+from simulation import run_simulation
+from config import DEFAULT_CONFIG
+
 
 def save_rqr_plot(t_array, rqr_rsa, rqr_kyber):
     """
@@ -53,6 +56,7 @@ def save_rqr_plot(t_array, rqr_rsa, rqr_kyber):
     plt.savefig('results/figure1_rqr_evolution.png')
     print("Saved results/figure1_rqr_evolution.png")
 
+
 def save_cas_plot(t_array, scenario_results):
     """
     Generate and save CAS trajectories plot for migration scenarios.
@@ -88,3 +92,78 @@ def save_cas_plot(t_array, scenario_results):
     
     plt.savefig('results/figure2_cas_scenarios.png')
     print("Saved results/figure2_cas_scenarios.png")
+
+
+# Added: Figure 3 - Sensitivity analysis heatmap
+
+def generate_sensitivity_heatmap():
+    """
+    Generate Figure 3: Sensitivity analysis heatmap.
+    Tests TCI across growth rate (mu_g) and Algorithm Strength weight (w_AS).
+    """
+    # Define parameter ranges
+    mu_g_range = np.linspace(0.3, 0.7, 10)  # 10 values from 0.3 to 0.7
+    w_as_range = np.linspace(0.30, 0.50, 10)  # 10 values from 0.30 to 0.50
+    
+    # Initialize TCI matrix
+    tci_matrix = np.zeros((len(w_as_range), len(mu_g_range)))
+    
+    # Run simulations for each parameter combination
+    print("Running sensitivity analysis...")
+    for i, w_as in enumerate(w_as_range):
+        for j, mu_g in enumerate(mu_g_range):
+            # Adjust weights (must sum to 1.0)
+            w_km = 0.25
+            w_dc = 0.20
+            w_cai = 1.0 - w_as - w_km - w_dc
+            
+            # Run simulation with these parameters
+            config_local = DEFAULT_CONFIG.copy()
+            config_local['mu_g'] = mu_g
+            config_local['weights'] = {
+                'AS': w_as,
+                'KM': w_km,
+                'DC': w_dc,
+                'CAI': w_cai
+            }
+            
+            results = run_simulation(config_local, n_iterations=100)  # Reduced for speed
+            tci_matrix[i, j] = results['tci']
+            
+        print(f"Progress: {(i+1)/len(w_as_range)*100:.1f}%")
+    
+    # Create heatmap
+    fig, ax = plt.subplots(figsize=(10, 8))
+    
+    # Use seaborn for better aesthetics
+    sns.heatmap(
+        tci_matrix,
+        xticklabels=[f'{x:.2f}' for x in mu_g_range],
+        yticklabels=[f'{y:.2f}' for y in w_as_range],
+        cmap='RdYlGn',  # Red-Yellow-Green colormap
+        vmin=0.70,      # Min TCI (red)
+        vmax=0.95,      # Max TCI (green)
+        annot=True,     # Show values in cells
+        fmt='.3f',      # Format: 3 decimal places
+        cbar_kws={'label': 'Trust Continuity Index (TCI)'},
+        ax=ax
+    )
+    
+    # Formatting
+    ax.set_xlabel('Growth Rate ($\\mu_g$)', fontsize=14)
+    ax.set_ylabel('Algorithm Strength Weight ($w_{AS}$)', fontsize=14)
+    ax.set_title('Sensitivity Analysis: TCI Across Parameter Space', fontsize=16, fontweight='bold')
+    
+    # Add threshold line (optional baseline reference)
+    ax.axhline(y=0, color='black', linewidth=2)
+    
+    plt.tight_layout()
+    plt.savefig('results/figure3_sensitivity_analysis.png', dpi=300, bbox_inches='tight')
+    plt.show()
+    
+    print(f"Figure 3 saved to: results/figure3_sensitivity_analysis.png")
+    print(f"TCI range: {tci_matrix.min():.3f} - {tci_matrix.max():.3f}")
+
+
+if __name__ == '__main__':
+    generate_sensitivity_heatmap()
