@@ -78,6 +78,57 @@ Or use docker-compose:
 docker-compose up
 ```
 
+## Reproducibility
+
+The simulator ensures reproducible results by using a **fixed random seed of 42 by default**. This default behavior aligns with the paper's methodology and guarantees that running the simulation multiple times without specifying a seed will produce identical results.
+
+- **Default behavior**: The simulation uses `seed=42` automatically
+- **Override the seed**: Use `--seed <value>` to specify a different seed
+- **Disable reproducibility**: Currently not supported; a seed is always set
+
+Example:
+```bash
+# Uses default seed=42
+python main.py
+
+# Uses custom seed
+python main.py --seed 123
+```
+
+## Migration Scenarios
+
+The framework implements three migration strategies as defined in the research paper (Equations 15-17):
+
+### Aggressive (Eq. 15)
+Logistic migration curve for organizations with strong resources and urgency to adopt PQC quickly.
+
+**Parameters:**
+- `L_max = 0.98`: Maximum coverage (98%)
+- `k = 1.2`: Growth rate parameter
+- `t0 = 3`: Midpoint year (inflection point)
+
+**Formula:** `L(t) = 0.98 / (1 + exp(-1.2 * (t - 3)))`
+
+### Conservative (Eq. 16)
+Linear migration at a steady pace, suitable for risk-averse organizations.
+
+**Parameters:**
+- Linear rate: `18%` per year
+- No delay or acceleration
+
+**Formula:** `L(t) = min(1.0, 0.18 * t)`
+
+### Late_Start (Eq. 17)
+Delayed linear migration representing organizations that postpone migration decisions.
+
+**Parameters:**
+- `t_delay = 2`: Migration starts after 2 years
+- Linear rate: `18%` per year (after delay)
+
+**Formula:** 
+- `L(t) = 0` for `t < 2`
+- `L(t) = min(1.0, 0.18 * (t - 2))` for `t ≥ 2`
+
 ## Repository Structure
 
 ```
@@ -150,8 +201,8 @@ SIMULATION RESULTS SUMMARY
 ============================================================
 
 Algorithm Risk Assessment (Year 5):
-  RSA-2048:   0.0106
-  Kyber-512:  0.0000
+  RSA-2048:   0.0116
+  Kyber-512:  7.000e-10
 
 Trust Continuity Index (TCI) by Scenario:
   Aggressive      TCI: 0.874
@@ -163,8 +214,8 @@ Trust Continuity Index (TCI) by Scenario:
 
 ### Interpretation
 
-- **RSA-2048 Risk**: The probability that RSA-2048 can be broken in Year 5 is about 1%
-- **Kyber-512 Risk**: Kyber-512 remains extremely secure (near-zero risk) throughout the horizon
+- **RSA-2048 Risk**: The probability that RSA-2048 can be broken in Year 5 is approximately 1.16%
+- **Kyber-512 Risk**: Kyber-512 remains extremely secure with near-zero risk (~7×10⁻¹⁰) throughout the horizon
 - **TCI Values**: Conservative migration achieves the highest trust continuity (0.894), balancing security and operational stability
 
 The framework generates two figures:

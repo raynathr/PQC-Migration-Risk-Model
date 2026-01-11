@@ -141,10 +141,10 @@ def main():
     
     logging.info("Starting PQC Migration Risk Model Simulation")
     
-    # Set random seed for reproducibility
-    if args.seed is not None:
-        np.random.seed(args.seed)
-        logging.info(f"Random seed set to: {args.seed}")
+    # Set random seed for reproducibility (default to 42 if not provided)
+    seed = args.seed if args.seed is not None else 42
+    np.random.seed(seed)
+    logging.info(f"Random seed set to: {seed}")
     
     # Override config if needed
     if args.n_iterations != config.N_SIMULATIONS:
@@ -184,7 +184,7 @@ def main():
         print("="*60)
         print(f"\nAlgorithm Risk Assessment (Year 5):")
         print(f"  RSA-2048:   {np.mean(rqr_rsa[:, 4]):.4f}")
-        print(f"  Kyber-512:  {np.mean(rqr_kyber[:, 4]):.4f}")
+        print(f"  Kyber-512:  {np.mean(rqr_kyber[:, 4]):.3e}")
         
         print(f"\nTrust Continuity Index (TCI) by Scenario:")
         for name, data in scenario_data.items():

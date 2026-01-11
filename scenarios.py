@@ -21,7 +21,7 @@ def get_migration_coverage(scenario_name, t_array):
     - Conservative (Eq. 16): Linear migration at 18% per year,
       suitable for risk-averse organizations with gradual adoption
     
-    - Late_Start (Eq. 17): Delayed linear migration starting after 3 years,
+    - Late_Start (Eq. 17): Delayed linear migration starting after 2 years,
       representing organizations that postpone migration decisions
     
     Args:
@@ -36,11 +36,10 @@ def get_migration_coverage(scenario_name, t_array):
     L_t = np.zeros_like(t_array, dtype=float)
     
     if scenario_name == "Aggressive":
-        # Eq. 15: Logistic curve
-        # Parameters tuned to reach ~98% quickly
+        # Eq. 15: Logistic curve (L_max=0.98, k=1.2, t0=3)
         L_max = 0.98
-        k = 0.8
-        t0 = 4  # Midpoint year
+        k = 1.2
+        t0 = 3  # Midpoint year
         L_t = L_max / (1 + np.exp(-k * (t_array - t0)))
         
     elif scenario_name == "Conservative":
@@ -48,8 +47,8 @@ def get_migration_coverage(scenario_name, t_array):
         L_t = np.minimum(1.0, 0.18 * t_array)
         
     elif scenario_name == "Late_Start":
-        # Eq. 17: Delayed linear
-        t_delay = 3
+        # Eq. 17: Delayed linear with t_delay=2 years
+        t_delay = 2
         # Apply delay logic
         mask = t_array >= t_delay
         L_t[mask] = np.minimum(1.0, 0.18 * (t_array[mask] - t_delay))
